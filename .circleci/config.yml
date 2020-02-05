@@ -1,0 +1,80 @@
+version: 2.1
+
+commands:
+  deploy:
+    description: "Deploy to Firebase"
+    steps:
+      - restore_cache:
+          keys:
+            - firebase_tools
+
+      - run:
+          name: Install firebase-tools
+          command: npm i --prefix=./firebase-deploy firebase-tools
+
+      - save_cache:
+          paths:
+            - ./firebase-deploy
+          key: firebase_tools
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-functions-{{ checksum "functions/package.json" }}
+            - v1-dependencies-functions-
+
+      - run:
+          name: Install dependencies
+          command: |
+            cd functions
+            npm i
+            cd ..
+
+      - save_cache:
+          paths:
+            - functions/node_modules
+          key: v1-dependencies-functions-{{ checksum "functions/package.json" }}
+
+      - run:
+          name: Switch project
+          command: ./firebase-deploy/node_modules/.bin/firebase --token $FIREBASE_DEPLOY_TOKEN  use $BUILD_ENV
+
+      - run:
+          name: Deploy
+          command: ./firebase-deploy/node_modules/.bin/firebase --token $FIREBASE_DEPLOY_TOKEN deploy
+
+jobs:
+  build-staging:
+    docker:
+      - image: circleci/node:8.16.2
+    working_directory: ~/repo
+    environment:
+      BUILD_ENV: staging
+    steps:
+      - checkout
+      - deploy
+
+  build-production:
+    docker:
+      - image: circleci/node:8.16.2
+    working_directory: ~/repo
+    environment:
+      BUILD_ENV: production
+    steps:
+      - checkout
+      - deploy
+
+workflows:
+  version: 2
+  build-staging:
+    jobs:
+      - build-staging:
+          filters:
+            branches:
+              only: master
+
+  build-production:
+    jobs:
+      - build-production:
+          filters:
+            branches:
+              only: production
