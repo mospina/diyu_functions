@@ -1,13 +1,5 @@
 import { Request, Response} from 'express';
-import { firestore, auth } from './initializeApp';
-
-const isSuperuser = async (email:string): Promise<boolean> => {
-  const result = await firestore.collection('superusers')
-    .where('email', '==', email)
-    .get()
-
-  return !result.empty
-}
+import { auth } from './initializeApp';
 
 const isAuthenticated = async (req: Request, res: Response, next: Function) => {
   const { authorization } = req.headers;
@@ -28,7 +20,6 @@ const isAuthenticated = async (req: Request, res: Response, next: Function) => {
       ...res.locals, 
       uid: decodedToken.uid, 
       email: decodedToken.email,
-      admin: decodedToken.admin
     }
 
     return next()
@@ -37,17 +28,4 @@ const isAuthenticated = async (req: Request, res: Response, next: Function) => {
   }
 }
 
-const isAuthorized = (req: Request, res: Response, next: Function) => {
-  const { uid, email, admin } = res.locals
-  const { id } = req.params
-
-  if (id && uid === id)
-    return next()
-
-  if (isSuperuser(email) || admin)
-    return next()
-
-  return res.status(403).send()
-}
-
-export { isAuthenticated, isAuthorized }
+export { isAuthenticated }
