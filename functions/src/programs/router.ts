@@ -1,11 +1,10 @@
 import * as express from 'express';
 import * as programs from './controllers/programs';
 import * as courses from './controllers/courses';
-import { isAuthenticated, isAuthorized } from '../auth';
+import { isAuthenticated } from '../auth';
 
 const router = express.Router();
 router.use(express.json());
-router.use(isAuthenticated, isAuthorized)
 
 /*
  * Verb    Path            Description             Auth
@@ -16,10 +15,10 @@ router.use(isAuthenticated, isAuthorized)
  * DELETE /programs/:id  Deletes the :id program  User
 */
 router.get('/', programs.list);
-router.post('/', programs.create);
+router.post('/', isAuthenticated, programs.create);
 router.get('/:pid', programs.show);
-router.patch('/:pid', programs.patch);
-router.delete('/:pid', programs.remove);
+router.patch('/:pid', isAuthenticated, programs.patch);
+router.delete('/:pid', isAuthenticated, programs.remove);
 
 /*
  * Verb    Path                        Description               Auth
@@ -30,9 +29,9 @@ router.delete('/:pid', programs.remove);
  * DELETE /programs/:pid/courses/:id  Deletes the :id course     User
 */
 router.get('/:pid/courses', courses.list);
-router.post('/:pid/courses', courses.create);
+router.post('/:pid/courses', isAuthenticated, courses.create);
 router.get('/:pid/courses/:id', courses.show);
-router.patch('/:pid/courses/:id', courses.patch);
-router.delete('/:pid/courses/:id', courses.remove);
+router.patch('/:pid/courses/:id', isAuthenticated, courses.patch);
+router.delete('/:pid/courses/:id', isAuthenticated, courses.remove);
 
 export { router };

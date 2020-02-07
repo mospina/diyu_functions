@@ -1,6 +1,34 @@
 import { Request, Response} from 'express';
+import { getPrograms } from '../model';
 
-const list = (req: Request, res: Response) => res.send('Hello express get');
+/* Returns all programs for userId user
+ *
+ * Response:
+ * {
+ *   user: {
+ *    id: string,
+ *   },
+ *   programs: [{
+ *    id: string
+ *    name: string,
+ *    description?: string,
+ *    slug?: string,
+ *    courses: Course[],
+ *    createdAt: Date,
+ *    updatedAt: Date
+ *    link: string
+ *   }]
+ * }
+*/
+const list = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params
+    const result = await getPrograms(userId)
+    return res.status(200).send(result);
+  } catch (error) {
+    return res.status(500).send({message: `${error.code} - ${error.message}`})
+  }
+}
 
 const create = (req: Request, res: Response) => res.send('Hello express post');
 
