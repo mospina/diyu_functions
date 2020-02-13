@@ -66,4 +66,3 @@ node_modules/
 
 # circleci v2.0 file
 .circleci/process.yml
-
