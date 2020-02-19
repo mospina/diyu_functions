@@ -1,5 +1,6 @@
 import { Request, Response} from 'express';
-import { getPrograms } from '../model';
+import { read } from './model';
+import { programs } from './serializer'
 
 /* Returns all programs for userId user
  *
@@ -12,7 +13,7 @@ import { getPrograms } from '../model';
  *    id: string
  *    name: string,
  *    description?: string,
- *    slug?: string,
+ *    slug: string,
  *    courses: Course[],
  *    createdAt: Date,
  *    updatedAt: Date
@@ -23,8 +24,8 @@ import { getPrograms } from '../model';
 const list = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params
-    const result = await getPrograms(userId)
-    return res.status(200).send(result);
+    const result = await read(userId)
+    return res.status(200).send(programs(userId, result));
   } catch (error) {
     return res.status(500).send({message: `${error.code} - ${error.message}`})
   }

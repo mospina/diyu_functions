@@ -1,6 +1,6 @@
 import * as express from 'express';
-import * as programs from './controllers/programs';
-import * as courses from './controllers/courses';
+import * as programs from './controller';
+import * as courses from './courses/controller';
 import { isAuthenticated } from '../auth';
 
 const router = express.Router();

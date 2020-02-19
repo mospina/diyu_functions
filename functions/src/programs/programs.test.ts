@@ -5,11 +5,33 @@ import * as model from './model';
 
 const testEnv = functions();
 
+// EXAMPLES
+
+const program1: Program.Program = {
+  id: "1",
+  name: "",
+  description: "",
+  slug: "",
+  courses: [],
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
+
+const program2: Program.Program = {
+  id: "2",
+  name: "",
+  slug: "",
+  courses: [],
+  createdAt: new Date(),
+  updatedAt: new Date()
+}
+
+
 // MOCKS
 jest.mock('./model')
 const mockedModel = model as jest.Mocked<typeof model>;
 
-mockedModel.getPrograms.mockImplementation((userId: string) => ({user: { id: 'string'}}))
+mockedModel.read.mockImplementation((userId: string) => Promise.resolve([program1, program2]))
 
 // SPECS
 describe('programs', () => {
