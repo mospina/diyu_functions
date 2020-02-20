@@ -12,12 +12,11 @@ const create = async (userId: string, program: Program.Program): Promise<Program
     createdAt: timestamp(),
     updatedAt: timestamp()
   })
-  // TODO if program.courses add courses
   return {...program, id: result.id}
 }
 
 // Request firestore for all documents in the programs collection
-const read = async (userId: string): Promise<Program.Program[]> => { 
+const readAll = async (userId: string): Promise<Program.Program[]> => { 
   try {
     const snapshot = await collection(userId).get()
     const programs = snapshot.docs.map((doc) => {
@@ -35,4 +34,16 @@ const read = async (userId: string): Promise<Program.Program[]> => {
   }
 }
 
-export { create, read }
+const read = async (userId: string, programId: string): Promise<Program.Program> => {
+  const snapshot = await collection(userId).doc(programId).get()
+  const data = snapshot.data()
+  if (!data)
+    throw new Error(`Unable to retrieve programs ${programId}`)
+  
+  return {
+    ...data as Program.Program,
+    id: snapshot.id
+  }
+}
+
+export { create, readAll, read }

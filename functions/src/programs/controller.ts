@@ -1,5 +1,5 @@
 import { Request, Response} from 'express';
-import { create, read } from './model';
+import { create, readAll, read } from './model';
 import * as serializer from './serializer'
 
 /* Returns all programs for userId user
@@ -24,7 +24,7 @@ import * as serializer from './serializer'
 const list = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params
-    const result = await read(userId)
+    const result = await readAll(userId)
     return res.status(200).send(serializer.programs(userId, result));
   } catch (error) {
     return res.status(500).send({message: `${error.code} - ${error.message}`})
@@ -43,13 +43,6 @@ const list = async (req: Request, res: Response) => {
  *     name: string,
  *     description: string,
  *     slug: string,
- *     courses: [{
- *       name: string,
- *       description: string,
- *       slug: string,
- *       url: string,
- *       progress: "TODO"|"DOING"|"DONE"
- *     }]
  *   }
  * }
  *
@@ -64,7 +57,6 @@ const list = async (req: Request, res: Response) => {
  *    name: string,
  *    description?: string,
  *    slug: string,
- *    courses: Course[],
  *    createdAt: Date,
  *    updatedAt: Date
  *    link: string
@@ -85,7 +77,33 @@ const add = async (req: Request, res: Response) => {
   }
 }
 
-const show = (req: Request, res: Response) => res.send(req.params.pid);
+/* Get program with id :pid
+ *
+ * Response:
+ * {
+ *   user: {
+ *    id: string,
+ *   },
+ *   program: {
+ *    id: string
+ *    name: string,
+ *    description?: string,
+ *    slug: string,
+ *    createdAt: Date,
+ *    updatedAt: Date
+ *    link: string
+ *   }
+ * }
+ */
+const show = async (req: Request, res: Response) => {
+  try {
+    const { userId, pid } = req.params
+    const result = await read(userId, pid)
+    return res.status(200).send(serializer.program(userId, result))
+  } catch (error) {
+    return res.status(500).send({message: `${error.code} - ${error.message}`})
+  }
+}
 
 const patch = (req: Request, res: Response) => res.send(req.params.pid);
 

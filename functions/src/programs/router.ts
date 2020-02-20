@@ -1,7 +1,8 @@
 import * as express from 'express';
 import * as programs from './controller';
 import * as courses from './courses/controller';
-import { isAuthenticated, isOwner } from '../auth';
+//import { isAuthenticated, isOwner } from '../auth';
+import { isAuthenticated } from '../auth';
 
 const router = express.Router({mergeParams: true});
 router.use(express.json());
@@ -15,7 +16,8 @@ router.use(express.json());
  * DELETE /programs/:id  Deletes the :id program  User
 */
 router.get('/', programs.list);
-router.post('/', isAuthenticated, isOwner, programs.add);
+// router.post('/', isAuthenticated, isOwner, programs.add);
+router.post('/', programs.add);
 router.get('/:pid', programs.show);
 router.patch('/:pid', isAuthenticated, programs.patch);
 router.delete('/:pid', isAuthenticated, programs.remove);

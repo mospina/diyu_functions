@@ -26,13 +26,13 @@ const program2: Program.Program = {
   updatedAt: new Date()
 }
 
-
 // MOCKS
 jest.mock('./model')
 const mockedModel = model as jest.Mocked<typeof model>;
 
 mockedModel.create.mockImplementation((userId: string, program) => Promise.resolve(program1))
-mockedModel.read.mockImplementation((userId: string) => Promise.resolve([program1, program2]))
+mockedModel.readAll.mockImplementation((userId: string) => Promise.resolve([program1, program2]))
+mockedModel.read.mockImplementation((userId: string, projectId) => Promise.resolve(program1))
 
 jest.mock('firebase-admin', () => ({
   initializeApp: jest.fn(),
@@ -67,13 +67,12 @@ describe('programs', () => {
       .send({program: program1})
       .set('Content-type', 'application/json')
       .set('Authorization', 'Bearer idToken')
-    console.log(res.text)
     expect(res.status).toBe(401);
   })
   
-  test.skip('GET  /programs/:id Gets the :pid program', async () => {
+  test('GET  /programs/:id Gets the :pid program', async () => {
     const res = await request(api)
-      .get(baseUrl('testUser'))
+      .get(baseUrl('testUser') + '/1')
     expect(res.status).toBe(200);
   })
   
