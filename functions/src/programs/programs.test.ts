@@ -31,7 +31,16 @@ const program2: Program.Program = {
 jest.mock('./model')
 const mockedModel = model as jest.Mocked<typeof model>;
 
+mockedModel.create.mockImplementation((userId: string, program) => Promise.resolve(program1))
 mockedModel.read.mockImplementation((userId: string) => Promise.resolve([program1, program2]))
+
+jest.mock('firebase-admin', () => ({
+  initializeApp: jest.fn(),
+  auth: () => ({
+    verifyIdToken: jest.fn().mockReturnValue({uid: 'testUser'}),
+  }),
+  firestore: () => ({})
+}));
 
 // SPECS
 describe('programs', () => {
@@ -43,16 +52,23 @@ describe('programs', () => {
     expect(res.status).toBe(200);
   })
 
-  test.skip('POST /programs Creates a new program', async () => {
+  test('POST /programs Creates a new program', async () => {
     const res = await request(api)
       .post(baseUrl('testUser'))
+      .send({program: program1})
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer idToken')
     expect(res.status).toBe(201);
   })
 
-  test.skip('POST /programs returns unauthorized when authentication is invalid', async () => {
+  test('POST /programs returns unauthorized when authentication is invalid', async () => {
     const res = await request(api)
-      .get(baseUrl('testUser'))
-    expect(res.status).toBe(400);
+      .post(baseUrl('otherUser'))
+      .send({program: program1})
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer idToken')
+    console.log(res.text)
+    expect(res.status).toBe(401);
   })
   
   test.skip('GET  /programs/:id Gets the :pid program', async () => {

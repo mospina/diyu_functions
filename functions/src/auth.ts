@@ -28,4 +28,15 @@ const isAuthenticated = async (req: Request, res: Response, next: Function) => {
   }
 }
 
-export { isAuthenticated }
+const isOwner = (req: Request, res: Response, next: Function) => {
+  const { uid } = res.locals
+  const { userId } = req.params
+
+  if (uid === userId) {
+    return next()
+  }
+
+  return res.status(401).send({ message: 'Unauthorized' });
+}
+
+export { isAuthenticated, isOwner }

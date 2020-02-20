@@ -1,21 +1,21 @@
 import * as express from 'express';
 import * as programs from './controller';
 import * as courses from './courses/controller';
-import { isAuthenticated } from '../auth';
+import { isAuthenticated, isOwner } from '../auth';
 
-const router = express.Router();
+const router = express.Router({mergeParams: true});
 router.use(express.json());
 
 /*
  * Verb    Path            Description             Auth
  * GET    /programs 	   Lists all programs       - 
- * POST   /programs 	   Creates new program      User
+ * POST   /programs 	   Creates new program      Auth, Owner
  * GET    /programs/:id  Gets the :id program     - 
  * PATCH  /programs/:id  Updates the :id program  User
  * DELETE /programs/:id  Deletes the :id program  User
 */
 router.get('/', programs.list);
-router.post('/', isAuthenticated, programs.create);
+router.post('/', isAuthenticated, isOwner, programs.add);
 router.get('/:pid', programs.show);
 router.patch('/:pid', isAuthenticated, programs.patch);
 router.delete('/:pid', isAuthenticated, programs.remove);
