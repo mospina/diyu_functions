@@ -17,7 +17,7 @@ router.use(express.json());
 router.get('/', programs.list);
 router.post('/', isAuthenticated, isOwner, programs.add);
 router.get('/:pid', programs.show);
-router.patch('/:pid', isAuthenticated, programs.patch);
+router.patch('/:pid', isAuthenticated, isOwner, programs.patch);
 router.delete('/:pid', isAuthenticated, programs.remove);
 
 /*

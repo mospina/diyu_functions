@@ -46,4 +46,14 @@ const read = async (userId: string, programId: string): Promise<Program.Program>
   }
 }
 
-export { create, readAll, read }
+const update = async (userId: string, programId: string, program: Program.Program): Promise<Program.Program> => {
+  await collection(userId).doc(programId).update({
+    name: program.name,
+    slug: program.slug,
+    description: program.description ? program.description : '',
+    updatedAt: timestamp()
+  })
+  return {...program, id: programId}
+}
+
+export { create, readAll, read, update }

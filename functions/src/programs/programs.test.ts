@@ -32,7 +32,8 @@ const mockedModel = model as jest.Mocked<typeof model>;
 
 mockedModel.create.mockImplementation((userId: string, program) => Promise.resolve(program1))
 mockedModel.readAll.mockImplementation((userId: string) => Promise.resolve([program1, program2]))
-mockedModel.read.mockImplementation((userId: string, projectId) => Promise.resolve(program1))
+mockedModel.read.mockImplementation((userId: string, programId) => Promise.resolve(program1))
+mockedModel.update.mockImplementation((userId: string, programId, program) => Promise.resolve(program1))
 
 jest.mock('firebase-admin', () => ({
   initializeApp: jest.fn(),
@@ -76,16 +77,22 @@ describe('programs', () => {
     expect(res.status).toBe(200);
   })
   
-  test.skip('PATCH /programs/:id Updates the :pid program', async () => {
+  test('PATCH /programs/:id Updates the :pid program', async () => {
     const res = await request(api)
-      .get(baseUrl('testUser'))
+      .patch(baseUrl('testUser') + '/1')
+      .send({program: program1})
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer idToken')
     expect(res.status).toBe(200);
   })
   
-  test.skip('PATCH /programs/:id returns unauthorized when authentication is invalid', async () => {
+  test('PATCH /programs/:id returns unauthorized when authentication is invalid', async () => {
     const res = await request(api)
-      .get(baseUrl('testUser'))
-    expect(res.status).toBe(400);
+      .patch(baseUrl('otherUser') + '/1')
+      .send({program: program1})
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer idToken')
+    expect(res.status).toBe(401);
   })
   
   test.skip('DELETE /programs/:id Deletes the :id program', async () => {
