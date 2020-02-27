@@ -56,4 +56,6 @@ const update = async (userId: string, programId: string, program: Program.Progra
   return {...program, id: programId}
 }
 
-export { create, readAll, read, update }
+const destroy = (userId: string, programId: string) => collection(userId).doc(programId).delete()
+
+export { create, readAll, read, update, destroy }

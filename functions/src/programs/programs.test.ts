@@ -95,16 +95,20 @@ describe('programs', () => {
     expect(res.status).toBe(401);
   })
   
-  test.skip('DELETE /programs/:id Deletes the :id program', async () => {
+  test('DELETE /programs/:id Deletes the :id program', async () => {
     const res = await request(api)
-      .get(baseUrl('testUser'))
-    expect(res.status).toBe(200);
+      .delete(baseUrl('testUser') + '/1')
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer idToken')
+    expect(res.status).toBe(204);
   })
   
-  test.skip('DELETE /programs/:id returns unauthorized when auth is not valid', async () => {
+  test('DELETE /programs/:id returns unauthorized when auth is not valid', async () => {
     const res = await request(api)
-      .get(baseUrl('testUser'))
-    expect(res.status).toBe(400);
+      .delete(baseUrl('otherUser') + '/1')
+      .set('Content-type', 'application/json')
+      .set('Authorization', 'Bearer idToken')
+    expect(res.status).toBe(401);
   })
 })
 

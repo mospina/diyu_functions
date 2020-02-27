@@ -1,5 +1,5 @@
 import { Request, Response} from 'express';
-import { create, readAll, read, update } from './model';
+import { create, readAll, read, update, destroy } from './model';
 import * as serializer from './serializer'
 
 /* Returns all programs for userId user
@@ -151,7 +151,16 @@ const patch = async (req: Request, res: Response) => {
   }
 }
 
-const remove = (req: Request, res: Response) => res.send(req.params.pid);
+const remove = async (req: Request, res: Response) => { 
+  try {
+    const { userId, pid } = req.params
+    await destroy(userId, pid)
+    return res.status(204).send()
+
+  } catch (error) {
+    return res.status(500).send({message: `${error.code} - ${error.message}`})
+  }
+}
 
 export {
   list,
