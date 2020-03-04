@@ -29,9 +29,9 @@ router.delete('/:pid', isAuthenticated, isOwner, programs.remove);
  * DELETE /programs/:pid/courses/:id  Deletes the :id course     User
 */
 router.get('/:pid/courses', courses.list);
-router.post('/:pid/courses', isAuthenticated, courses.create);
+router.post('/:pid/courses', isAuthenticated, isOwner, courses.add);
 router.get('/:pid/courses/:id', courses.show);
-router.patch('/:pid/courses/:id', isAuthenticated, courses.patch);
-router.delete('/:pid/courses/:id', isAuthenticated, courses.remove);
+router.patch('/:pid/courses/:id', isAuthenticated, isOwner, courses.patch);
+router.delete('/:pid/courses/:id', isAuthenticated, isOwner, courses.remove);
 
 export { router };

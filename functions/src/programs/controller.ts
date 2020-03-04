@@ -14,7 +14,6 @@ import * as serializer from './serializer'
  *    name: string,
  *    description?: string,
  *    slug: string,
- *    courses: Course[],
  *    createdAt: Date,
  *    updatedAt: Date
  *    link: string
@@ -156,7 +155,6 @@ const remove = async (req: Request, res: Response) => {
     const { userId, pid } = req.params
     await destroy(userId, pid)
     return res.status(204).send()
-
   } catch (error) {
     return res.status(500).send({message: `${error.code} - ${error.message}`})
   }

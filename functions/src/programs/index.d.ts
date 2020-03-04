@@ -21,11 +21,14 @@ declare namespace Program {
    */   
 
   type Course = {
+    id?: string,
     name: string,
     description?: string,
     slug: string,
     url: string,
     progress: Progress
+    createdAt?: Date,
+    updatedAt?: Date
   }
   /*
    * interp. Course is a MOOC course or book. url is the provider of the course
